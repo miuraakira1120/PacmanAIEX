@@ -1,6 +1,26 @@
+#include<iostream>
+#include<queue>
+#include<Windows.h>
+#include <iomanip>
+#include <algorithm>
+#include <vector>
 
-class Node
+using std::queue;
+using std::vector;
+using std::pair;
+
+struct Cell
 {
+	int x = 0;
+	int z = 0;
+};
+
+struct Node
+{
+	Cell position;
+	vector<Cell> edges;	// 隣接ノード(辺)
+	float heuristicCost;	// ヒューリスティックコスト
+	float totalCost;	// コスト(ヒューリスティックコスト込み)
 };
 //#include<iostream>
 //#include<queue>

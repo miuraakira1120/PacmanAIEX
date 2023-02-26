@@ -10,6 +10,24 @@ static const int MAP_COL = 23;
 //vector<Node> Open;	//計算中のノードを格納しておくための優先度付きキュー
 //vector<Node> Close;	//計算済みのノードを格納しておく
 
+using std::queue;
+using std::vector;
+using std::pair;
+
+struct Cell
+{
+    int x = 0;
+    int z = 0;
+};
+
+struct Node
+{
+    Cell position;
+    vector<Cell> edges;	// 隣接ノード(辺)
+    float heuristicCost;	// ヒューリスティックコスト
+    float totalCost;	// コスト(ヒューリスティックコスト込み)
+};
+
 //◆◆◆を管理するクラス
 class Stage : public GameObject
 {
@@ -17,7 +35,7 @@ class Stage : public GameObject
     int hModel_[2];    //モデル番号
     int map_[MAP_ROW][MAP_COL];
 
-    //Node nodeMap[MAP_ROW][MAP_COL];
+    Node nodeMap[MAP_ROW][MAP_COL];
     
 public:
 
@@ -59,4 +77,15 @@ public:
 
     //void Astar(pair<int, int> startCel_, pair<int, int> goalCel_);
 
+    //Nodeの作成
+    void InitNode();
+
+    bool IsCellWithinTheRange();
+
+    /// <summary>
+    /// コストの初期化
+    /// </summary>
+    void InitCost();
+
+    void AStar(Cell start, Cell goal);
 };

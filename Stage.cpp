@@ -3,6 +3,12 @@
 #include "Engine/CsvReader.h"
 #include "Node.h"
 
+#include<iostream>
+#include<queue>
+#include<Windows.h>
+#include <iomanip>
+#include <algorithm>
+#include <vector>
 
 //コンストラクタ
 Stage::Stage(GameObject* parent)
@@ -68,6 +74,65 @@ void Stage::Release()
 bool Stage::IsWall(int x, int z)
 {
     return map_[x][z] == 1;
+}
+void Stage::InitNode()
+{
+    for (int y = 0; y < MAP_ROW; y++)
+    {
+        for (int x = 0; x < MAP_COL; x++)
+        {
+            nodeMap[y][x].position.x = x;
+            nodeMap[y][x].position.z = y;
+
+            Cell cellDown  = { x, y - 1 };
+            Cell cellLeft  = { x - 1, y };
+            Cell cellRight = { x + 1, y };
+            Cell cellUP    = { x, y + 1 };
+
+            Cell adjacent_cells[] =
+            {
+                cellDown,
+                cellLeft,
+                cellRight,
+                cellUP,
+            };
+
+            // 隣接ノードの追加
+            for (const Cell& cell : adjacent_cells)
+            {
+                if (IsCellWithinTheRange(cell.X, cell.Y) == true &&
+                    map[cell.z][cell.x] != 1)
+                {
+                    nodeMap[y][x].Edges.push_back(&nodeMap[cell.Y][cell.X]);
+                }
+            }
+        }
+    }
+}
+bool Stage::IsCellWithinTheRange()
+{
+    if (x >= 0 &&
+        x < MapWidth &&
+        y >= 0 &&
+        y < MapHeight)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+// コスト初期化
+void Stage::InitCost()
+{
+    for (int y = 0; y < MAP_ROW; y++)
+    {
+        for (int x = 0; x < MAP_COL; x++)
+        {
+            nodeMap[y][x].heuristicCost = 9999;
+            nodeMap[y][x].totalCost = 0;
+        }
+    }
 }
 /*
 

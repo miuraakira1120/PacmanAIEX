@@ -102,4 +102,3 @@
 //	return GoalDistance() + StartDistance();
 
 #include "Node.h"
-//}
