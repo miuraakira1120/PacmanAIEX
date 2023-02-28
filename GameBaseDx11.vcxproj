@@ -149,7 +149,6 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="Guzuta.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="Pinky.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
@@ -179,7 +178,6 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="Guzuta.h" />
-    <ClInclude Include="Node.h" />
     <ClInclude Include="Pinky.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />

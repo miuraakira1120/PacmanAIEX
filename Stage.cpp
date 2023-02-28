@@ -1,7 +1,6 @@
 #include "Stage.h"
 #include "Engine/Model.h"
 #include "Engine/CsvReader.h"
-#include "Node.h"
 
 #include<iostream>
 #include<queue>
@@ -75,14 +74,16 @@ bool Stage::IsWall(int x, int z)
 {
     return map_[x][z] == 1;
 }
+
+//ノードを生成
 void Stage::InitNode()
 {
-    for (int y = 0; y < MAP_ROW; y++)
+    for (int x = 0; x < MAP_ROW; x++)
     {
-        for (int x = 0; x < MAP_COL; x++)
+        for (int y = 0; y < MAP_COL; y++)
         {
-            nodeMap[y][x].position.x = x;
-            nodeMap[y][x].position.z = y;
+            nodeMap[x][y].position.x = x;
+            nodeMap[x][y].position.y = y;
 
             Cell cellDown  = { x, y - 1 };
             Cell cellLeft  = { x - 1, y };
@@ -100,25 +101,21 @@ void Stage::InitNode()
             // 隣接ノードの追加
             for (const Cell& cell : adjacent_cells)
             {
-                if (IsCellWithinTheRange(cell.X, cell.Y) == true &&
-                    map[cell.z][cell.x] != 1)
+                if (IsCellWithinTheRange(cell.x, cell.y) == true &&
+                    map_[cell.x][cell.y] != 1)
                 {
-                    nodeMap[y][x].Edges.push_back(&nodeMap[cell.Y][cell.X]);
+                    nodeMap[y][x].edges.push_back(&nodeMap[cell.x][cell.y]);
                 }
             }
         }
     }
 }
-bool Stage::IsCellWithinTheRange()
+bool Stage::IsCellWithinTheRange(int x, int y)
 {
-    if (x >= 0 &&
-        x < MapWidth &&
-        y >= 0 &&
-        y < MapHeight)
+    if (x >= 0 && x < MAP_ROW && y >= 0 && y < MAP_COL)
     {
         return true;
     }
-
     return false;
 }
 
@@ -134,6 +131,18 @@ void Stage::InitCost()
         }
     }
 }
+
+// 昇順ソート用関数
+bool Stage::Less(Node* a, Node* b)
+{
+    if (a->totalCost < b->totalCost)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 /*
 
 void Stage::InitNodeMap()

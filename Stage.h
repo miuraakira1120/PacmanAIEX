@@ -14,18 +14,49 @@ using std::queue;
 using std::vector;
 using std::pair;
 
+#include<iostream>
+#include<queue>
+#include<Windows.h>
+#include <iomanip>
+#include <algorithm>
+#include <vector>
+
+using std::queue;
+using std::vector;
+using std::pair;
+
 struct Cell
 {
-    int x = 0;
-    int z = 0;
+    Cell() :
+        x(-1),
+        y(-1)
+    {
+    }
+
+    Cell(int X, int Y)
+    {
+        x = X;
+        y = Y;
+    }
+
+    int x;		//行
+    int y;		//列
 };
 
 struct Node
 {
     Cell position;
-    vector<Cell> edges;	// 隣接ノード(辺)
+    std::vector<Node*> edges;	// 隣接ノード(辺)
     float heuristicCost;	// ヒューリスティックコスト
     float totalCost;	// コスト(ヒューリスティックコスト込み)
+};
+
+// 削除結果
+enum EraseResult
+{
+    NotFound,		// 未発見
+    Erased,			// 削除
+    CouldntErased	// 削除できない
 };
 
 //◆◆◆を管理するクラス
@@ -80,7 +111,8 @@ public:
     //Nodeの作成
     void InitNode();
 
-    bool IsCellWithinTheRange();
+    // セルの範囲をチェックする関数
+    bool IsCellWithinTheRange(int x, int y);
 
     /// <summary>
     /// コストの初期化
@@ -88,4 +120,6 @@ public:
     void InitCost();
 
     void AStar(Cell start, Cell goal);
+
+    bool Less(Node* a, Node* b);
 };

@@ -91,7 +91,6 @@
     <ClCompile Include="Aosuke.cpp" />
     <ClCompile Include="Pinky.cpp" />
     <ClCompile Include="Guzuta.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="AStar.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,7 +160,6 @@
     <ClInclude Include="Pinky.h" />
     <ClInclude Include="Guzuta.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Node.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
