@@ -122,12 +122,12 @@ bool Stage::IsCellWithinTheRange(int x, int y)
 // ƒRƒXƒg‰Šú‰»
 void Stage::InitCost()
 {
-    for (int y = 0; y < MAP_ROW; y++)
+    for (int x = 0; x < MAP_ROW; x++)
     {
-        for (int x = 0; x < MAP_COL; x++)
+        for (int y = 0; y < MAP_COL; y++)
         {
-            nodeMap[y][x].heuristicCost = 9999;
-            nodeMap[y][x].totalCost = 0;
+            nodeMap[x][y].heuristicCost = 9999;
+            nodeMap[x][y].totalCost = 0;
         }
     }
 }
