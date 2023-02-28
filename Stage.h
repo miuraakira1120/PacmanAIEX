@@ -6,8 +6,8 @@
 
 class Node;
 
-static const int MAP_ROW = 23;
-static const int MAP_COL = 23;
+static const int MAP_ROW = 13;
+static const int MAP_COL = 13;
 //vector<Node> Open;	//ŒvZ’†‚Ìƒm[ƒh‚ğŠi”[‚µ‚Ä‚¨‚­‚½‚ß‚Ì—Dæ“x•t‚«ƒLƒ…[
 //vector<Node> Close;	//ŒvZÏ‚İ‚Ìƒm[ƒh‚ğŠi”[‚µ‚Ä‚¨‚­
 
@@ -25,6 +25,27 @@ using std::pair;
 using std::queue;
 using std::vector;
 using std::pair;
+
+const std::pair<int, int> DIRECCIONS[] = {
+   { -1, 0 },
+   { +1, 0 },
+   { 0, -1 },
+   { 0, +1 }
+};
+
+enum Move
+{
+    UP_ROW = 0,
+    DOWN_ROW,
+    LEFT_COL,
+    RIGHT_COL,
+};
+
+enum MODE
+{
+    TERRITORIAL_MODE = 0,
+    TRACKING_MODE,
+};
 
 struct Cell
 {
@@ -128,9 +149,8 @@ public:
 
     std::list<Cell> AStar(Cell start, Cell goal);
 
-    bool Less(Node* a, Node* b);
-
     float CalculateHeuristic(const Node* node, const Node* Goal);
 
     Cell RandEdgesCell(Cell nowPos, Cell prevPos);
+
 };

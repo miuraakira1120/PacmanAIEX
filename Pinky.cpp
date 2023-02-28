@@ -1,10 +1,16 @@
 #include "Pinky.h"
 #include "Engine/Model.h"
 #include "Engine/SphereCollider.h"
+#include <queue>
+#include "Player.h"
+
+using std::vector;
+using std::pair;
+
 
 //コンストラクタ
 Pinky::Pinky(GameObject* parent)
-    :GameObject(parent, "Pinky"), hModel_(-1)
+    :GameObject(parent, "Pinky"), hModel_(-1), mode(TERRITORIAL_MODE), prevCell(-1, -1)
 {
 }
 
@@ -23,8 +29,19 @@ void Pinky::Initialize()
     pStage = (Stage*)FindObject("Stage");
     assert(pStage != nullptr);
 
-    transform_.position_.x = 12.5;
-    transform_.position_.z = 12.5;
+    pPlayer = (Player*)FindObject("Player");
+    assert(pPlayer != nullptr);
+
+
+    transform_.position_.x = 10.5f;
+    transform_.position_.z = 0.5f;
+
+    Cell cellPPos = { (int)pPlayer->GetPosition().x, (int)pPlayer->GetPosition().z };
+    Cell cellEPos = { (int)transform_.position_.x, (int)transform_.position_.z };
+    routeList = pStage->AStar(cellEPos, cellPPos);
+
+    //リストの先頭を削除
+    routeList.pop_front();
 
     SphereCollider* collision = new SphereCollider(XMFLOAT3(0, 0, 0), 0.3f);
     AddCollider(collision);
@@ -33,8 +50,73 @@ void Pinky::Initialize()
 //更新
 void Pinky::Update()
 {
-    //transform_.position_.x += 0.1;
     XMVECTOR prevPosition = XMLoadFloat3(&transform_.position_);
+
+    //mode = TRACKING_MODE;
+    if (!((int)transform_.position_.x == routeList.front().x &&
+        (int)transform_.position_.z == routeList.front().y))
+    {
+        switch (mode)
+        {
+        case TERRITORIAL_MODE:
+            //もし目的地にたどり着いたら
+            if ((int)transform_.position_.x == routeList.front().x &&
+                (int)transform_.position_.z == routeList.front().y)
+            {
+                routeList.clear();
+                routeList.push_front(pStage->RandEdgesCell(Cell((int)transform_.position_.x, (int)transform_.position_.z), prevCell));
+                prevCell = { (int)transform_.position_.x, (int)transform_.position_.z };
+            }
+            break;
+        case TRACKING_MODE:
+
+            //もし目的地にたどり着いたら
+            if ((int)transform_.position_.x == routeList.front().x &&
+                (int)transform_.position_.z == routeList.front().y)
+            {
+                routeList.clear();
+                Cell newPinkyMoveCell;
+                Cell pinkyMoveCell = pStage->RandEdgesCell(Cell((int)pPlayer->GetPosition().x, (int)pPlayer->GetPosition().z), prevCell);
+                prevCell = { (int)pPlayer->GetPosition().x, (int)pPlayer->GetPosition().z };
+                for (int i = 0; i < 2; i++)
+                {
+                    newPinkyMoveCell = pinkyMoveCell;
+                    pinkyMoveCell = pStage->RandEdgesCell(pinkyMoveCell, prevCell);
+                    prevCell = newPinkyMoveCell;
+                }
+
+                //Astar法
+                Cell cellEPos = { (int)transform_.position_.x,   (int)transform_.position_.z };
+
+                routeList = pStage->AStar(cellEPos, pinkyMoveCell);
+                routeList.pop_front();
+
+                prevCell = { (int)transform_.position_.x, (int)transform_.position_.z };
+            }
+
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        if ((int)transform_.position_.x == routeList.front().x &&
+            (int)transform_.position_.z == routeList.front().y)
+        {
+            routeList.clear();
+            routeList.push_front(pStage->RandEdgesCell(Cell((int)transform_.position_.x, (int)transform_.position_.z), prevCell));
+            prevCell = { (int)transform_.position_.x, (int)transform_.position_.z };
+        }
+    }
+    
+
+    XMFLOAT3 fMove = { routeList.front().x + 0.5f - transform_.position_.x, 0, routeList.front().y + 0.5f - transform_.position_.z };
+    XMVECTOR vMove = XMLoadFloat3(&fMove);
+    vMove = XMVector3Normalize(vMove);
+    vMove *= SPEED;
+    XMStoreFloat3(&fMove, vMove);
+    transform_.position_ = Transform::Float3Add(transform_.position_, fMove);
 
     //現在の位置ベクトル
     XMVECTOR nowPosition = XMLoadFloat3(&transform_.position_);
@@ -47,7 +129,6 @@ void Pinky::Update()
     //0.1以上移動していたら回転処理
     if (XMVectorGetY(lenght) > 0.1)
     {
-
         //ベクトルを正規化する
         move = XMVector3Normalize(move);
 
@@ -72,6 +153,28 @@ void Pinky::Update()
 
         //そのぶん回転させる
         transform_.rotate_.y = angle * (180.0f / 3.14f);
+    }
+
+    //敵から自分のベクトルを作る
+    XMFLOAT3 pPos = pPlayer->GetPosition();
+    XMVECTOR vEPos = XMLoadFloat3(&transform_.position_);
+    XMVECTOR vPPos = XMLoadFloat3(&pPos);
+    XMVECTOR vEnemyFromPlayer = vPPos - vEPos;
+    XMVECTOR nEnemyFromPlayer = XMVector3Normalize(vEnemyFromPlayer);
+
+    //視線ベクトルを作る
+    XMVECTOR eRayVec = { 0, 0, 1, 0 };
+    XMMATRIX mY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+    eRayVec = XMVector3Normalize(XMVector3TransformCoord(eRayVec, mY));
+
+    //敵から自分のベクトルと視線ベクトルの内積をとって視界に入っているか調べる
+    float viewDot = XMVectorGetX(XMVector3Dot(vEnemyFromPlayer, eRayVec));
+
+    //視界に入っていて（壁は無視する）距離が近ければ
+    if (viewDot > VIEWING_ANGLE && XMVectorGetX(XMVector3Length(vEnemyFromPlayer)) < NEAR_DISTANCE)
+    {
+        //モードチェンジ
+        mode = TRACKING_MODE;
     }
 
     /////////衝突判定////////////
@@ -112,6 +215,7 @@ void Pinky::Update()
     }
 }
 
+
 //描画
 void Pinky::Draw()
 {
@@ -123,3 +227,9 @@ void Pinky::Draw()
 void Pinky::Release()
 {
 }
+
+void Pinky::Astar()
+{
+
+}
+

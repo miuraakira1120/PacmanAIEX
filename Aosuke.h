@@ -2,15 +2,23 @@
 #include "Engine/GameObject.h"
 #include "Stage.h"
 
+class Player;
+class Akabei;
+
 //◆◆◆を管理するクラス
 class Aosuke : public GameObject
 {
     int hModel_;    //モデル番号
-
     Stage* pStage = nullptr;
+    Player* pPlayer = nullptr;
+    Akabei* pAkabei = nullptr;
+    std::list<Cell> routeList;
+    int mode;
+    Cell prevCell;
 
-    std::pair<int, int> Map_Start;
-    std::pair<int, int> MAP_GOAL;
+    const float VIEWING_ANGLE = 0.3f;//視野角（-1から1）
+    const float NEAR_DISTANCE = 4.0f;
+    const float SPEED = 0.05f;
 
 public:
     //コンストラクタ
@@ -30,4 +38,8 @@ public:
 
     //開放
     void Release() override;
+
+    //Astar法での探索
+    void Astar();
+
 };

@@ -23,8 +23,8 @@ void Player::Initialize()
     hModel_ = Model::Load("Player.fbx");
     assert(hModel_ >= 0);
 
-    transform_.position_.x = 1.5;
-    transform_.position_.z = 1.5;
+    transform_.position_.x = 6.5f;
+    transform_.position_.z = 6.5f;
 
     pStage = (Stage*)FindObject("Stage");
     assert(pStage != nullptr);
@@ -155,10 +155,10 @@ void Player::OnCollision(GameObject* pTarget)
 {
     //ìñÇΩÇ¡ÇΩÇ∆Ç´ÇÃèàóù
     if (pTarget->GetObjectName() == "Akabei" ||
-        pTarget->GetObjectName() == "Aobei" ||
-        pTarget->GetObjectName() == "Pinky" ||
+        pTarget->GetObjectName() == "Aobei"  ||
+        pTarget->GetObjectName() == "Pinky"  ||
         pTarget->GetObjectName() == "Guzuta")
     {
-        int a = 0;
+        MessageBox(NULL, "GameOver", "écîOÅI", NULL);
     }
 }

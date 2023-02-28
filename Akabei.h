@@ -4,27 +4,6 @@
 
 class Player;
 
-static const std::pair<int, int> DIRECCIONS[] = {
-    { -1, 0 },
-    { +1, 0 },
-    { 0, -1 },
-    { 0, +1 }
-};
-
-static enum Move
-{
-    UP_ROW = 0,
-    DOWN_ROW,
-    LEFT_COL,
-    RIGHT_COL,
-};
-
-enum MODE
-{
-    TERRITORIAL_MODE = 0,
-    TRACKING_MODE,
-};
-
 //◆◆◆を管理するクラス
 class Akabei : public GameObject
 {
@@ -36,7 +15,8 @@ class Akabei : public GameObject
     Cell prevCell;
 
     const float VIEWING_ANGLE = 0.3f;//視野角（-1から1）
-    const float NEAR_DISTANCE = 7.0f;
+    const float NEAR_DISTANCE = 4.0f;
+    const float SPEED = 0.05;
 
 public:
     //コンストラクタ

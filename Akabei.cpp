@@ -33,8 +33,8 @@ void Akabei::Initialize()
     assert(pPlayer != nullptr);
     
 
-    transform_.position_.x = 10.5;
-    transform_.position_.z = 11.5;
+    transform_.position_.x = 0.5f;
+    transform_.position_.z = 0.5f;
 
     Cell cellPPos = { (int)pPlayer->GetPosition().x, (int)pPlayer->GetPosition().z };
     Cell cellEPos = { (int)transform_.position_.x, (int)transform_.position_.z };
@@ -66,19 +66,23 @@ void Akabei::Update()
         }
         break;
     case TRACKING_MODE :
-        //もし目的地にたどり着いたら
-        if ((int)transform_.position_.x == routeList.front().x &&
-            (int)transform_.position_.z == routeList.front().y)
+        if (!((int)pPlayer->GetPosition().x == routeList.front().x &&
+            (int)pPlayer->GetPosition().z == routeList.front().y))
         {
-            prevCell = { routeList.front().x, routeList.front().y };
-            //Astar法
-            Cell cellPPos = { (int)pPlayer->GetPosition().x, (int)pPlayer->GetPosition().z };
-            Cell cellEPos = { (int)transform_.position_.x,   (int)transform_.position_.z };
+            //もし目的地にたどり着いたら
+            if ((int)transform_.position_.x == routeList.front().x &&
+                (int)transform_.position_.z == routeList.front().y)
+            {
+                prevCell = { routeList.front().x, routeList.front().y };
+                //Astar法
+                Cell cellPPos = { (int)pPlayer->GetPosition().x, (int)pPlayer->GetPosition().z };
+                Cell cellEPos = { (int)transform_.position_.x,   (int)transform_.position_.z };
 
-            routeList = pStage->AStar(cellEPos, cellPPos);
+                routeList = pStage->AStar(cellEPos, cellPPos);
 
-            //リストの先頭を削除
-            routeList.pop_front();
+                //リストの先頭を削除
+                routeList.pop_front();
+            }
         }
         break;
     default:
@@ -88,7 +92,7 @@ void Akabei::Update()
     XMFLOAT3 fMove = { routeList.front().x + 0.5f - transform_.position_.x, 0, routeList.front().y + 0.5f - transform_.position_.z };
     XMVECTOR vMove = XMLoadFloat3(&fMove);
     vMove = XMVector3Normalize(vMove);
-    vMove *= 0.1;
+    vMove *= SPEED;
     XMStoreFloat3(&fMove, vMove);
     transform_.position_ = Transform::Float3Add(transform_.position_, fMove);
 

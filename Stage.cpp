@@ -35,7 +35,7 @@ void Stage::Initialize()
     assert(hModel_ >= 0);
 
     CsvReader csv;
-    csv.Load("PacMap.csv");
+    csv.Load("PacMap2.csv");
 
     for (int i = 0; i < MAP_ROW; i++)
     {
@@ -135,17 +135,6 @@ void Stage::InitCost()
             nodeMap[x][y].totalCost = 0;
         }
     }
-}
-
-//Nodeのソート関数(昇順)
-bool Stage::Less(Node* a, Node* b)
-{
-    if (a->totalCost < b->totalCost)
-    {
-        return true;
-    }
-
-    return false;
 }
 
 // ノードとゴールまでの距離
@@ -260,14 +249,9 @@ std::list<Cell> Stage::AStar(Cell start, Cell goal)
     // スタートノードの指定
     open_list.push_back(&nodeMap[start.x][start.y]);
 
-    // 経路探索回数
-    int count = 0;
-
     // オープンリストがなくなるまで回す
     while (open_list.empty() == false)
     {
-        count++;
-
         Node* search_node = (*open_list.begin());
         // 探索リストから除外
         open_list.erase(open_list.begin());
@@ -373,104 +357,3 @@ std::list<Cell> Stage::AStar(Cell start, Cell goal)
     }
     return lRoute;
 }
-
-
-/*
-
-void Stage::InitNodeMap()
-{
-    for (int i = 0; i < MAP_ROW; i++)
-    {
-        for (int j = 0; j < MAP_COL; j++)
-        {
-            nodeMap[i][j].SetMapCost(map_[i][j]);
-            nodeMap[i][j].SetPos(i, j);
-        }
-    }
-}*/
-
-//
-//bool Stage::AstarSub(pair<int, int> startCel_, pair<int, int> goalCel_, int openNode_)
-//{
-//	Open.erase(std::cbegin(Open) + openNode_);
-//	Node LowCostNode;
-//	LowCostNode.SetCost(9999);
-//	//Openリストに格納されているノードの内、最小のノードを1つ取り出す
-//	for (const auto& dir : DIRECCIONS)
-//	{
-//		int nextRow = nodeMap[startCel_.first][startCel_.second].GetRowPos() + dir.first;
-//		int nextCol = nodeMap[startCel_.first][startCel_.second].GetPosCol() + dir.second;
-//
-//		//次のノードの親ノードを設定
-//		nodeMap[nextRow][nextCol].SetParentNode(startCel_);
-//		std::pair<int, int> aaa = nodeMap[nextRow][nextCol].GetParentNode();
-//
-//		if (nodeMap[nextRow][nextCol].GetIsOpen() == false && nodeMap[nextRow][nextCol].GetMapCost() > -1)//openにもcloseにも障害物もダメ)
-//		{
-//			int nextCost = nodeMap[nextRow][nextCol].StartDistance() + nodeMap[nextRow][nextCol].GoalDistance();
-//			nodeMap[nextRow][nextCol].SetCost(nextCost);
-//
-//			Open.push_back(nodeMap[nextRow][nextCol]);
-//			nodeMap[nextRow][nextCol].SetIsOpen(true);
-//
-//
-//			//コストの少ない
-//			if (nodeMap[nextRow][nextCol].GetCost() < LowCostNode.GetCost())
-//			{
-//				LowCostNode.SetCost(nodeMap[nextRow][nextCol].GetCost());
-//				LowCostNode.SetPos(nodeMap[nextRow][nextCol].GetRowPos(), nodeMap[nextRow][nextCol].GetPosCol());
-//
-//			}
-//		}
-//	}
-//	//もしゴールノードだったら
-//	if (goalCel_.first == LowCostNode.GetRowPos() && goalCel_.second == LowCostNode.GetPosCol())
-//	{
-//		return true;
-//	}
-//	return false;
-//}
-//
-//void Stage::Astar(pair<int, int> startCel_, pair<int, int> goalCel_)
-//{
-//	int endFlag = false;
-//	Open.push_back(nodeMap[startCel_.first][startCel_.second]);
-//	nodeMap[startCel_.first][startCel_.second].SetIsOpen(true);
-//	//Closeキューの初期化
-//	/*for (int i = 0; i < Close.size(); i++)
-//	{
-//		Close.pop();
-//	}*/
-//
-//	//Openリストが空なら探索は失敗
-//	while (Open.size() != 0 && endFlag == false)
-//	{
-//		int minCost = 9999;
-//		int min = 0;
-//		for (int i = 0; i < Open.size() - 1; i++)
-//		{
-//			if (minCost > Open[i].GetCost())
-//			{
-//				minCost = Open[i].GetCost();
-//				min = i;
-//			}
-//		}
-//
-//		Node tmp = Open[min];
-//		Close.push_back(tmp);
-//		endFlag = AstarSub(Open[min].GetColRow(), goalCel_, min);
-//	}
-//
-//	std::pair<int, int> next = { -1, -1 };
-//
-//	//vector<std::pair<int, int>> mol;
-//	//mol.push_back(nodeMap[goalCel_.first][goalCel_.second].GetParentNode());
-//	next = nodeMap[goalCel_.first][goalCel_.second].GetParentNode();
-//	while (!nodeMap[next.first][next.second].GetParentNode().first == -1)
-//	{
-//		//mol.push_back(nodeMap[next.first][next.second].GetParentNode());
-//		nodeMap[next.first][next.second].SetIsRoad(true);
-//		next = nodeMap[next.first][next.second].GetParentNode();
-//	}
-//}
-
