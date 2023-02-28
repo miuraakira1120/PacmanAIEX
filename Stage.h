@@ -2,6 +2,7 @@
 
 #include "Engine/GameObject.h"
 #include <vector>
+#include<queue>
 
 class Node;
 
@@ -119,7 +120,17 @@ public:
     /// </summary>
     void InitCost();
 
-    void AStar(Cell start, Cell goal);
+    bool IsEqualCell(const Cell& a, const Cell& b);
+
+    EraseResult EraseNode(std::list<Node*>& list, Node* new_node, float new_cost);
+
+    bool AddAdjacentNode(std::list<Node*>& open_list, std::list<Node*>& close_list, Node* adjacent_node, float cost);
+
+    std::list<Cell> AStar(Cell start, Cell goal);
 
     bool Less(Node* a, Node* b);
+
+    float CalculateHeuristic(const Node* node, const Node* Goal);
+
+    Cell RandEdgesCell(Cell nowPos, Cell prevPos);
 };

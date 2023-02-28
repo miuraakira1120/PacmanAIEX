@@ -2,6 +2,8 @@
 #include "Engine/GameObject.h"
 #include "Stage.h"
 
+class Player;
+
 static const std::pair<int, int> DIRECCIONS[] = {
     { -1, 0 },
     { +1, 0 },
@@ -17,12 +19,24 @@ static enum Move
     RIGHT_COL,
 };
 
+enum MODE
+{
+    TERRITORIAL_MODE = 0,
+    TRACKING_MODE,
+};
+
 //◆◆◆を管理するクラス
 class Akabei : public GameObject
 {
     int hModel_;    //モデル番号
-
     Stage* pStage = nullptr;
+    Player* pPlayer = nullptr;
+    std::list<Cell> routeList;
+    int mode;
+    Cell prevCell;
+
+    const float VIEWING_ANGLE = 0.3f;//視野角（-1から1）
+    const float NEAR_DISTANCE = 7.0f;
 
 public:
     //コンストラクタ
