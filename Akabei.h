@@ -9,6 +9,7 @@ class Akabei : public GameObject
 {
     int hModel_;    //ƒ‚ƒfƒ‹”Ô†
     Stage* pStage = nullptr;
+
     Player* pPlayer = nullptr;
     std::list<Cell> routeList;
     int mode;
